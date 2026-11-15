@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Tarif;
 use App\Models\AreaParkir;
 use App\Models\Kendaraan;
+use App\Models\LogAktivitas;
 
 class AdminDashboardController extends Controller
 {
@@ -27,6 +28,9 @@ class AdminDashboardController extends Controller
         // Data Kendaraan
         $kendaraans = Kendaraan::all();
 
+        // Log Aktivitas
+        $logs = LogAktivitas::orderBy('waktu_aktivitas', 'desc')->get();
+
         // Jumlah data
         $jumlahUser = User::count();
         $jumlahTarif = Tarif::count();
@@ -39,6 +43,7 @@ class AdminDashboardController extends Controller
             'tarifs',
             'areas',
             'kendaraans',
+            'logs',
             'jumlahUser',
             'jumlahTarif',
             'jumlahArea',

@@ -18,9 +18,11 @@ class Kendaraan extends Model
 
     protected $fillable = [
         'id_kendaraan',
+        'plat_nomor',
         'jenis_kendaraan',
         'warna',
         'pemilik',
         'id_user',
+        'status_aktif',
     ];
 }

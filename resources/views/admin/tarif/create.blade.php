@@ -171,7 +171,7 @@
             </div>
 
 
-            {{-- JENIS KENDARAAN --}}
+           {{-- JENIS KENDARAAN --}}
             <div class="mb-5">
 
                 <label class="mb-2 block text-sm font-semibold text-slate-300">
@@ -180,28 +180,39 @@
 
                 <select
                     name="jenis_kendaraan"
+                    id="jenis_kendaraan"
                     required
                     class="input-dark w-full rounded-xl px-4 py-3 text-sm"
                 >
-
                     <option value="">-- Pilih Kendaraan --</option>
 
-                    <option value="Motor"
-                        {{ old('jenis_kendaraan') == 'Motor' ? 'selected' : '' }}>
-                        Motor
-                    </option>
-
-                    <option value="Mobil"
-                        {{ old('jenis_kendaraan') == 'Mobil' ? 'selected' : '' }}>
-                        Mobil
-                    </option>
-
-                    <option value="Truk"
-                        {{ old('jenis_kendaraan') == 'Truk' ? 'selected' : '' }}>
-                        Truk
-                    </option>
+                    @foreach (['Motor', 'Mobil', 'Truk', 'Sepeda', 'Becak', 'Dokar', 'Lainnya'] as $jenis)
+                        <option value="{{ $jenis }}"
+                            {{ old('jenis_kendaraan') == $jenis ? 'selected' : '' }}>
+                            {{ $jenis }}
+                        </option>
+                    @endforeach
 
                 </select>
+
+                {{-- INPUT JIKA LAINNYA --}}
+                <div id="kendaraan_lainnya" class="mt-3 hidden">
+
+                    <label class="mb-2 block text-sm font-semibold text-slate-300">
+                        Nama Kendaraan Lainnya
+                    </label>
+
+                    <input
+                        type="text"
+                        name="jenis_kendaraan_lainnya"
+                        id="jenis_kendaraan_lainnya"
+                        value="{{ old('jenis_kendaraan_lainnya') }}"
+                        maxlength="100"
+                        placeholder="Contoh: Gerobak, Delman, dan lainnya"
+                        class="input-dark w-full rounded-xl px-4 py-3 text-sm"
+                    >
+
+                </div>
 
                 @error('jenis_kendaraan')
                     <p class="mt-2 text-sm text-red-400">
@@ -209,7 +220,34 @@
                     </p>
                 @enderror
 
+                @error('jenis_kendaraan_lainnya')
+                    <p class="mt-2 text-sm text-red-400">
+                        {{ $message }}
+                    </p>
+                @enderror
+
             </div>
+
+            <script>
+                const selectKendaraan = document.getElementById('jenis_kendaraan');
+                const inputLainnya = document.getElementById('kendaraan_lainnya');
+                const namaLainnya = document.getElementById('jenis_kendaraan_lainnya');
+
+                function cekKendaraan() {
+                    if (selectKendaraan.value === 'Lainnya') {
+                        inputLainnya.classList.remove('hidden');
+                        namaLainnya.required = true;
+                    } else {
+                        inputLainnya.classList.add('hidden');
+                        namaLainnya.required = false;
+                        namaLainnya.value = '';
+                    }
+                }
+
+                selectKendaraan.addEventListener('change', cekKendaraan);
+
+                cekKendaraan();
+            </script>
 
 
             {{-- TARIF PER JAM --}}

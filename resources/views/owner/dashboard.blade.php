@@ -1,660 +1,241 @@
+
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Dashboard Owner - KABASA</title>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background:
+                radial-gradient(circle at 85% 10%, rgba(127, 29, 29, .16), transparent 30%),
+                #090909;
+        }
+        .card-hover { transition: .25s ease; }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, .7);
+        }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: #090909; }
+        ::-webkit-scrollbar-thumb { background: #7f1d1d; border-radius: 10px; }
+    </style>
 </head>
 
+<body class="min-h-screen text-white">
 
-<body class="bg-slate-100 text-slate-800">
+<div class="min-h-screen">
 
+    {{-- SIDEBAR --}}
+    <aside class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-red-900/40 bg-black">
 
-    <div class="min-h-screen flex">
-
-
-        {{-- =====================================================
-             SIDEBAR
-        ====================================================== --}}
-
-        <aside class="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-slate-950 text-white">
-
-
-            {{-- LOGO --}}
-
-            <div class="flex h-24 items-center border-b border-slate-800 px-6">
-
-                <div class="flex items-center gap-3">
-
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-lg font-black text-slate-950">
-                        K
-                    </div>
-
-                    <div>
-
-                        <h1 class="text-lg font-black tracking-wide">
-                            KABASA
-                        </h1>
-
-                        <p class="text-[10px] uppercase tracking-[0.25em] text-slate-500">
-                            Parking System
-                        </p>
-
-                    </div>
-
-                </div>
-
+        <div class="flex h-16 items-center gap-3 border-b border-red-900/30 px-5">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-red-900 text-xl font-black shadow-lg shadow-red-950/50">
+                K
             </div>
+            <div>
+                <h1 class="font-bold tracking-wide">KABASA</h1>
+                <p class="text-[10px] text-red-400">Parking System</p>
+            </div>
+        </div>
 
+        <div class="px-4 pt-6">
+            <p class="mb-3 text-[10px] font-bold uppercase tracking-[.2em] text-red-500">
+                Menu Owner
+            </p>
 
-
-            {{-- MENU --}}
-
-            <nav class="flex-1 px-4 py-6">
-
-
-                <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                    Menu Owner
-                </p>
-
-
-                {{-- DASHBOARD --}}
-
-                <a href="/owner/dashboard"
-                    class="mb-2 flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-950 shadow-lg">
-
-                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
-                        🏠
-                    </span>
-
-                    Dashboard
-
+            <nav class="space-y-2">
+                <a href="{{ route('owner.dashboard') }}"
+                   class="flex items-center gap-3 rounded-xl bg-gradient-to-r from-red-600 to-red-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-red-950/30">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
                 </a>
 
-
-
-                {{-- REKAP TRANSAKSI --}}
-
-                <a href="#"
-                    class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white">
-
-                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 group-hover:bg-slate-700">
-                        📊
-                    </span>
-
-                    Rekap Transaksi
-
+                <a href="{{ route('owner.laporan.index') }}"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-400 transition hover:bg-red-950/50 hover:text-white">
+                    <span>📊</span>
+                    <span>Laporan</span>
                 </a>
-
-
             </nav>
+        </div>
 
-
-
-            {{-- USER SIDEBAR --}}
-
-            <div class="border-t border-slate-800 p-4">
-
-
-                <div class="mb-3 flex items-center gap-3 rounded-xl bg-slate-900 p-3">
-
-
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-slate-950">
-
-                        {{ strtoupper(substr(auth()->user()->nama_lengkap, 0, 1)) }}
-
-                    </div>
-
-
-                    <div class="min-w-0">
-
-                        <p class="truncate text-sm font-semibold text-white">
-
-                            {{ auth()->user()->nama_lengkap }}
-
-                        </p>
-
-                        <p class="text-xs capitalize text-slate-500">
-
-                            {{ auth()->user()->role }}
-
-                        </p>
-
-                    </div>
-
-
+        {{-- PROFIL DAN LOGOUT DI BAWAH --}}
+        <div class="mt-auto border-t border-red-900/30 p-4">
+            <div class="mb-4 flex items-center gap-3 rounded-xl border border-red-900/30 bg-red-950/20 p-3">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-900 font-bold">
+                    {{ strtoupper(substr(auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'O', 0, 1)) }}
                 </div>
-
-
-
-                {{-- LOGOUT --}}
-
-                <form action="{{ route('logout') }}" method="POST">
-
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-400 transition hover:bg-red-500/10 hover:text-red-400">
-
-                        <span>
-                            ↪
-                        </span>
-
-                        Logout
-
-                    </button>
-
-                </form>
-
-
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-semibold">
+                        {{ auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'Owner' }}
+                    </p>
+                    <p class="text-xs text-red-400">Owner</p>
+                </div>
             </div>
 
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit"
+                        class="w-full rounded-xl px-3 py-2 text-left text-sm text-gray-400 transition hover:bg-red-950/50 hover:text-red-400">
+                    ↪ Logout
+                </button>
+            </form>
+        </div>
+    </aside>
 
-        </aside>
+    {{-- KONTEN UTAMA --}}
+    <main class="ml-72 min-h-screen">
 
+        {{-- TOPBAR --}}
+        <header class="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-red-900/30 bg-black/95 px-6 backdrop-blur">
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-red-500">
+                    KABASA PARKING SYSTEM
+                </p>
+                <h2 class="text-lg font-bold">Dashboard Owner</h2>
+            </div>
 
-
-        {{-- =====================================================
-             MAIN CONTENT
-        ====================================================== --}}
-
-        <main class="ml-64 min-h-screen flex-1">
-
-
-            {{-- TOPBAR --}}
-
-            <header class="sticky top-0 z-30 flex h-24 items-center justify-between border-b border-slate-200 bg-white/90 px-8 backdrop-blur">
-
-
-                <div>
-
-                    <p class="text-xs font-medium text-slate-400">
-                        KABASA Parking System
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p class="text-sm font-semibold">
+                        {{ auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'Owner' }}
                     </p>
+                    <p class="text-xs text-red-400">Owner</p>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-full border border-red-700 bg-gradient-to-br from-red-500 to-red-900 font-bold">
+                    {{ strtoupper(substr(auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'O', 0, 1)) }}
+                </div>
+            </div>
+        </header>
 
-                    <h2 class="mt-1 text-xl font-bold text-slate-950">
-                        Dashboard Owner
-                    </h2>
+        <div class="space-y-7 p-6 md:p-8">
 
+            {{-- BANNER --}}
+            <section class="relative overflow-hidden rounded-2xl border border-red-900/50 bg-gradient-to-r from-red-950 via-black to-black p-7 md:p-9">
+                <div class="pointer-events-none absolute -right-10 -top-16 h-60 w-60 rounded-full bg-red-600/10 blur-2xl"></div>
+
+                <div class="relative">
+                    <p class="mb-2 text-xs font-semibold text-red-400">
+                        Ringkasan Sistem Parkir 📊
+                    </p>
+                    <h3 class="text-2xl font-bold md:text-3xl">
+                        Selamat Datang,
+                        {{ auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'Owner' }}!
+                    </h3>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-gray-400">
+                        Pantau aktivitas parkir, lihat statistik transaksi,
+                        dan akses laporan KABASA melalui dashboard Owner.
+                    </p>
+                    <a href="{{ route('owner.laporan.index') }}"
+                       class="mt-5 inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold transition hover:bg-red-700">
+                        📊 Buka Laporan
+                        <span>→</span>
+                    </a>
+                </div>
+            </section>
+
+            {{-- STATISTIK --}}
+            <section>
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold">Ringkasan Parkir</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Informasi singkat transaksi parkir.
+                    </p>
                 </div>
 
-
-
-                {{-- NAMA USER --}}
-
-                <div class="flex items-center gap-4">
-
-
-                    <div class="text-right">
-
-                        <p class="text-sm font-semibold text-slate-800">
-
-                            {{ auth()->user()->nama_lengkap }}
-
-                        </p>
-
-                        <p class="text-xs capitalize text-slate-400">
-
-                            {{ auth()->user()->role }}
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-slate-950 text-sm font-bold text-white shadow-lg">
-
-                        {{ strtoupper(substr(auth()->user()->nama_lengkap, 0, 1)) }}
-
-                    </div>
-
-
-                </div>
-
-
-            </header>
-
-
-
-            {{-- =====================================================
-                 ISI DASHBOARD
-            ====================================================== --}}
-
-            <div class="p-8">
-
-
-                {{-- WELCOME --}}
-
-                <div class="relative mb-8 overflow-hidden rounded-3xl bg-slate-950 p-8 shadow-xl">
-
-
-                    {{-- DEKORASI --}}
-
-                    <div class="absolute -right-20 -top-32 h-80 w-80 rounded-full border border-white/5"></div>
-
-                    <div class="absolute -bottom-40 right-32 h-80 w-80 rounded-full bg-white/[0.03]"></div>
-
-
-                    <div class="relative">
-
-                        <p class="mb-2 text-sm font-medium text-slate-400">
-                            Ringkasan sistem parkir 📊
-                        </p>
-
-                        <h1 class="text-3xl font-bold text-white">
-                            Selamat Datang, {{ auth()->user()->nama_lengkap }}!
-                        </h1>
-
-                        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
-
-                            Pantau aktivitas transaksi dan lihat
-                            rekap parkir KABASA dengan mudah melalui
-                            dashboard Owner.
-
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-
-
-                {{-- =================================================
-                     CARD STATISTIK
-                ================================================== --}}
-
-                <div class="mb-8">
-
-
-                    <div class="mb-5">
-
-                        <h3 class="text-lg font-bold text-slate-950">
-                            Ringkasan Parkir
-                        </h3>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Informasi singkat transaksi parkir.
-                        </p>
-
-                    </div>
-
-
-
-                    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
-
-
-                        {{-- TOTAL TRANSAKSI --}}
-
-                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-
-
-                            <div class="flex items-start justify-between">
-
-
-                                <div>
-
-                                    <p class="text-sm font-medium text-slate-500">
-                                        Total Transaksi
-                                    </p>
-
-                                    <h3 class="mt-3 text-3xl font-bold text-slate-950">
-                                        0
-                                    </h3>
-
-                                    <p class="mt-2 text-xs text-slate-400">
-                                        Seluruh transaksi parkir
-                                    </p>
-
-                                </div>
-
-
-                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl">
-                                    🎫
-                                </div>
-
-
-                            </div>
-
-
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+
+                    <div class="card-hover rounded-2xl border border-red-900/40 bg-black p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-400">Total Transaksi</p>
+                            <span class="rounded-xl bg-red-950 p-3">🧾</span>
                         </div>
+                        <h4 class="mt-4 text-3xl font-bold">
+                            {{ number_format($totalTransaksi ?? 0) }}
+                        </h4>
+                        <p class="mt-2 text-xs text-gray-500">Seluruh transaksi parkir</p>
+                    </div>
 
-
-
-                        {{-- TRANSAKSI HARI INI --}}
-
-                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-
-
-                            <div class="flex items-start justify-between">
-
-
-                                <div>
-
-                                    <p class="text-sm font-medium text-slate-500">
-                                        Transaksi Hari Ini
-                                    </p>
-
-                                    <h3 class="mt-3 text-3xl font-bold text-slate-950">
-                                        0
-                                    </h3>
-
-                                    <p class="mt-2 text-xs text-slate-400">
-                                        Transaksi pada hari ini
-                                    </p>
-
-                                </div>
-
-
-                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl">
-                                    📅
-                                </div>
-
-
-                            </div>
-
-
+                    <div class="card-hover rounded-2xl border border-red-900/40 bg-black p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-400">Transaksi Hari Ini</p>
+                            <span class="rounded-xl bg-red-950 p-3">📅</span>
                         </div>
+                        <h4 class="mt-4 text-3xl font-bold">
+                            {{ number_format($transaksiHariIni ?? 0) }}
+                        </h4>
+                        <p class="mt-2 text-xs text-gray-500">Transaksi berdasarkan tanggal hari ini</p>
+                    </div>
 
-
-
-                        {{-- PENDAPATAN --}}
-
-                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-
-
-                            <div class="flex items-start justify-between">
-
-
-                                <div>
-
-                                    <p class="text-sm font-medium text-slate-500">
-                                        Pendapatan
-                                    </p>
-
-                                    <h3 class="mt-3 text-2xl font-bold text-slate-950">
-                                        Rp 0
-                                    </h3>
-
-                                    <p class="mt-2 text-xs text-slate-400">
-                                        Total pendapatan parkir
-                                    </p>
-
-                                </div>
-
-
-                                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl">
-                                    💰
-                                </div>
-
-
-                            </div>
-
-
+                    <div class="card-hover rounded-2xl border border-red-900/40 bg-black p-5">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-400">Total Pendapatan</p>
+                            <span class="rounded-xl bg-red-950 p-3">💰</span>
                         </div>
-
-
+                        <h4 class="mt-4 text-2xl font-bold text-red-400">
+                            Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}
+                        </h4>
+                        <p class="mt-2 text-xs text-gray-500">Pendapatan parkir</p>
                     </div>
 
                 </div>
+            </section>
 
+            {{-- PANEL LAPORAN --}}
+            <section class="overflow-hidden rounded-2xl border border-red-900/40 bg-black">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-red-900/30 p-6">
+                    <div>
+                        <h3 class="text-lg font-bold">Laporan Parkir</h3>
+                        <p class="mt-1 text-sm text-gray-400">
+                            Lihat rekap transaksi berdasarkan periode yang dipilih.
+                        </p>
+                    </div>
+                    <a href="{{ route('owner.laporan.index') }}"
+                       class="rounded-xl border border-red-700/60 bg-red-950/30 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-900/50 hover:text-white">
+                        📑 Buka Laporan →
+                    </a>
+                </div>
 
-
-                {{-- =================================================
-                     REKAP TRANSAKSI
-                ================================================== --}}
-
-                <div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-
-
-                    <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-
-
-                        <div>
-
-                            <h3 class="text-lg font-bold text-slate-950">
-                                Rekap Transaksi
-                            </h3>
-
-                            <p class="mt-1 text-sm text-slate-500">
-
-                                Lihat transaksi berdasarkan
-                                periode waktu tertentu.
-
-                            </p>
-
+                <div class="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+                    <div class="card-hover rounded-xl border border-zinc-800 bg-zinc-950 p-5">
+                        <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-red-950 text-xl">
+                            📊
                         </div>
-
-
-                        <a href="#"
-                            class="inline-flex items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-
-                            📊 Lihat Rekap
-
+                        <h4 class="font-semibold">Rekap Transaksi</h4>
+                        <p class="mt-2 text-sm leading-6 text-gray-400">
+                            Periksa data kendaraan, waktu masuk dan keluar,
+                            durasi parkir, biaya, serta petugas.
+                        </p>
+                        <a href="{{ route('owner.laporan.index') }}"
+                           class="mt-4 inline-block text-sm font-semibold text-red-400 hover:text-red-300">
+                            Lihat Laporan →
                         </a>
-
-
                     </div>
 
-
-
-                    {{-- FILTER --}}
-
-                    <div class="mt-7 grid grid-cols-1 gap-4 md:grid-cols-3">
-
-
-                        {{-- PERIODE --}}
-
-                        <div>
-
-                            <label class="mb-2 block text-sm font-semibold text-slate-600">
-                                Periode
-                            </label>
-
-                            <select
-                                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-slate-950 focus:ring-4 focus:ring-slate-950/5">
-
-                                <option>Hari Ini</option>
-                                <option>Kemarin</option>
-                                <option>Minggu Ini</option>
-                                <option>Bulan Ini</option>
-                                <option>Tahun Ini</option>
-
-                            </select>
-
+                    <div class="card-hover rounded-xl border border-zinc-800 bg-zinc-950 p-5">
+                        <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-red-950 text-xl">
+                            🖨️
                         </div>
-
-
-
-                        {{-- DARI --}}
-
-                        <div>
-
-                            <label class="mb-2 block text-sm font-semibold text-slate-600">
-                                Dari Tanggal
-                            </label>
-
-                            <input
-                                type="date"
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-slate-950 focus:ring-4 focus:ring-slate-950/5">
-
-                        </div>
-
-
-
-                        {{-- SAMPAI --}}
-
-                        <div>
-
-                            <label class="mb-2 block text-sm font-semibold text-slate-600">
-                                Sampai Tanggal
-                            </label>
-
-                            <input
-                                type="date"
-                                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-slate-950 focus:ring-4 focus:ring-slate-950/5">
-
-                        </div>
-
-
+                        <h4 class="font-semibold">Cetak Laporan</h4>
+                        <p class="mt-2 text-sm leading-6 text-gray-400">
+                            Pilih tanggal laporan, kemudian cetak rekap
+                            untuk kebutuhan administrasi.
+                        </p>
+                        <a href="{{ route('owner.laporan.index') }}"
+                           class="mt-4 inline-block text-sm font-semibold text-red-400 hover:text-red-300">
+                            Buka Halaman Laporan →
+                        </a>
                     </div>
-
-
-
-                    {{-- TABEL RINGKASAN --}}
-
-                    <div class="mt-7 overflow-hidden rounded-xl border border-slate-200">
-
-
-                        <table class="w-full text-left text-sm">
-
-
-                            <thead class="bg-slate-50">
-
-                                <tr>
-
-                                    <th class="px-5 py-4 font-semibold text-slate-600">
-                                        Keterangan
-                                    </th>
-
-                                    <th class="px-5 py-4 font-semibold text-slate-600">
-                                        Jumlah
-                                    </th>
-
-                                    <th class="px-5 py-4 font-semibold text-slate-600">
-                                        Status
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-
-                                <tr class="border-t border-slate-200">
-
-                                    <td class="px-5 py-4 text-slate-600">
-                                        Total transaksi
-                                    </td>
-
-                                    <td class="px-5 py-4 font-bold text-slate-950">
-                                        0
-                                    </td>
-
-                                    <td class="px-5 py-4">
-
-                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
-                                            Belum ada data
-                                        </span>
-
-                                    </td>
-
-                                </tr>
-
-
-
-                                <tr class="border-t border-slate-200">
-
-                                    <td class="px-5 py-4 text-slate-600">
-                                        Total pendapatan
-                                    </td>
-
-                                    <td class="px-5 py-4 font-bold text-slate-950">
-                                        Rp 0
-                                    </td>
-
-                                    <td class="px-5 py-4">
-
-                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
-                                            Belum ada data
-                                        </span>
-
-                                    </td>
-
-                                </tr>
-
-
-                            </tbody>
-
-
-                        </table>
-
-
-                    </div>
-
-
                 </div>
+            </section>
 
-
-
-                {{-- =================================================
-                     INFORMASI OWNER
-                ================================================== --}}
-
-                <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-
-                    <div class="flex items-start gap-4">
-
-
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xl">
-                            💡
-                        </div>
-
-
-                        <div>
-
-                            <h3 class="font-bold text-slate-950">
-                                Informasi Owner
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-6 text-slate-500">
-
-                                Gunakan menu <b>Rekap Transaksi</b>
-                                untuk melihat data transaksi parkir
-                                berdasarkan waktu yang dibutuhkan.
-
-                            </p>
-
-                        </div>
-
-
-                    </div>
-
-
-                </div>
-
-
-
-                {{-- FOOTER --}}
-
-                <footer class="py-8 text-center">
-
-                    <p class="text-xs text-slate-400">
-
-                        © {{ date('Y') }} KABASA Parking System
-
-                    </p>
-
-                </footer>
-
-
-            </div>
-
-
-        </main>
-
-
-    </div>
-
+            <footer class="pb-3 text-center text-xs text-gray-600">
+                © {{ date('Y') }} KABASA Parking System
+            </footer>
+        </div>
+    </main>
+</div>
 
 </body>
-
 </html>

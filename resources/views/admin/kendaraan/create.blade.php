@@ -156,7 +156,31 @@
                     </div>
 
 
+                        {{-- PLAT NOMOR --}}
+                        <div class="mb-5">
 
+                            <label class="mb-2 block text-sm font-semibold text-slate-300">
+                                Plat Nomor
+                            </label>
+
+                            <input
+                                type="text"
+                                name="plat_nomor"
+                                value="{{ old('plat_nomor') }}"
+                                placeholder="Contoh: AE 1234 AB"
+                                class="w-full rounded-lg border border-slate-800 bg-[#111111] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500">
+
+                            @error('plat_nomor')
+                                <p class="mt-2 text-xs text-red-400">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+
+                        </div>
+
+
+
+                        
                     {{-- JENIS KENDARAAN --}}
 
                     <div class="mb-5">

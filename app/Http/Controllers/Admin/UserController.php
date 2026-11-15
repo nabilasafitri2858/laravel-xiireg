@@ -103,16 +103,17 @@ class UserController extends Controller
     }
 
 
-    // Menghapus user
+    // Menonaktifkan user
     public function destroy($id_user)
     {
         $user = User::findOrFail($id_user);
 
-        $user->delete();
-
+        $user->update([
+            'status_aktif' => 0
+        ]);
 
         return redirect()
             ->route('admin.dashboard', ['menu' => 'user'])
-            ->with('success', 'User berhasil dihapus.');
+            ->with('success', 'User berhasil dinonaktifkan.');
     }
 }

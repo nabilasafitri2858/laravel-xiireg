@@ -860,16 +860,21 @@
 
                 </a>
 
-
-
-                {{-- AREA --}}
+                
+                {{-- AREA PARKIR --}}
 
                 <a
                     href="{{ route('admin.dashboard', ['menu' => 'area']) }}"
-                    class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white">
+                    class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition
+                    {{ $menu == 'area'
+                        ? 'bg-white font-semibold text-slate-950'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
 
                     <span
-                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 group-hover:bg-slate-700">
+                        class="flex h-8 w-8 items-center justify-center rounded-lg
+                        {{ $menu == 'area'
+                            ? 'bg-slate-100'
+                            : 'bg-slate-900 group-hover:bg-slate-700' }}">
 
                         🅿️
 
@@ -880,7 +885,6 @@
                     </span>
 
                 </a>
-
 
 
                 {{-- KENDARAAN --}}
@@ -921,11 +925,17 @@
 
 
             <a
-                href="#"
-                class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white">
+                href="{{ route('admin.dashboard', ['menu' => 'log']) }}"
+                class="group flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition
+                {{ $menu == 'log'
+                    ? 'bg-white font-semibold text-slate-950'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
 
                 <span
-                    class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 group-hover:bg-slate-700">
+                    class="flex h-8 w-8 items-center justify-center rounded-lg
+                    {{ $menu == 'log'
+                        ? 'bg-slate-100'
+                        : 'bg-slate-900 group-hover:bg-slate-700' }}">
 
                     📋
 
@@ -936,7 +946,6 @@
                 </span>
 
             </a>
-
         </nav>
 
 
@@ -1048,7 +1057,11 @@
 
                     @elseif($menu == 'kendaraan')
 
-                        Data Kendaraan    
+                        Data Kendaraan  
+                        
+                    @elseif($menu == 'log')
+                    
+                        Log Aktivitas
 
                     @else
 
@@ -2038,250 +2051,270 @@
 
                                     @elseif($menu == 'kendaraan')
 
-                    {{-- =================================================
-                        DATA KENDARAAN
-                    ================================================== --}}
+                            {{-- HEADER --}}
+                            <div class="mb-8 flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-400">
+                                        KABASA Parking System
+                                    </p>
 
-                    <div class="mb-8 flex items-center justify-between">
+                                    <h1 class="mt-1 text-3xl font-bold text-slate-900">
+                                        Data Kendaraan
+                                    </h1>
 
-                        <div>
+                                    <p class="mt-2 text-sm text-slate-500">
+                                        Kelola data kendaraan yang terdaftar dalam sistem parkir.
+                                    </p>
+                                </div>
 
-                            <p class="text-sm font-medium text-slate-400">
-                                KABASA Parking System
-                            </p>
+                                <a href="{{ route('admin.kendaraan.create') }}"
+                                    class="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800">
+                                    + Tambah Kendaraan
+                                </a>
+                            </div>
 
-                            <h1 class="mt-1 text-3xl font-bold text-slate-900">
-                                Data Kendaraan
-                            </h1>
+                            {{-- NOTIFIKASI --}}
+                            @if(session('success'))
+                                <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-medium text-green-700">
+                                    ✓ {{ session('success') }}
+                                </div>
+                            @endif
 
-                            <p class="mt-2 text-sm text-slate-500">
-                                Kelola data kendaraan yang terdaftar dalam sistem parkir.
-                            </p>
+                            {{-- TABEL --}}
+                            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                                <div class="border-b border-slate-200 px-6 py-5">
+                                    <h2 class="text-lg font-bold text-slate-900">
+                                        Daftar Kendaraan
+                                    </h2>
 
+                                    <p class="mt-1 text-sm text-slate-400">
+                                        Data kendaraan yang terdaftar dalam sistem KABASA.
+                                    </p>
+                                </div>
+
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">No</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">ID Kendaraan</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">Plat Nomor</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">Jenis Kendaraan</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">Warna</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">Pemilik</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">ID User</th>
+                                                <th class="px-6 py-4 font-semibold text-slate-500">Status</th>
+                                                <th class="px-6 py-4 text-center font-semibold text-slate-500">Aksi</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody class="divide-y divide-slate-100">
+                                            @forelse($kendaraans as $kendaraan)
+                                                <tr class="transition hover:bg-slate-50">
+                                                    <td class="px-6 py-4 text-slate-400">
+                                                        {{ $loop->iteration }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 font-semibold text-slate-700">
+                                                        {{ $kendaraan->id_kendaraan }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 font-semibold text-slate-700">
+                                                        {{ $kendaraan->plat_nomor ?: '-' }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 font-semibold text-slate-800">
+                                                        {{ $kendaraan->jenis_kendaraan }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 text-slate-600">
+                                                        {{ $kendaraan->warna }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 text-slate-700">
+                                                        {{ $kendaraan->pemilik }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 text-slate-600">
+                                                        {{ $kendaraan->id_user }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4">
+                                                        @if($kendaraan->status_aktif)
+                                                            <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                                                Aktif
+                                                            </span>
+                                                        @else
+                                                            <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                                                                Nonaktif
+                                                            </span>
+                                                        @endif
+                                                    </td>
+
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex justify-center gap-2">
+
+                                                            <a href="{{ route('admin.kendaraan.edit', $kendaraan->id_kendaraan) }}"
+                                                                class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">
+                                                                Edit
+                                                            </a>
+
+                                                            @if($kendaraan->status_aktif)
+                                                                <form action="{{ route('admin.kendaraan.destroy', $kendaraan->id_kendaraan) }}"
+                                                                    method="POST"
+                                                                    onsubmit="return confirm('Nonaktifkan kendaraan ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+
+                                                                    <button type="submit"
+                                                                        class="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
+                                                                        Nonaktifkan
+                                                                    </button>
+                                                                </form>
+                                                            @else
+                                                                <form action="{{ route('admin.kendaraan.activate', $kendaraan->id_kendaraan) }}"
+                                                                    method="POST"
+                                                                    onsubmit="return confirm('Aktifkan kembali kendaraan ini?')">
+                                                                    @csrf
+                                                                    @method('PATCH')
+
+                                                                    <button type="submit"
+                                                                        class="rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-700 transition hover:bg-green-100">
+                                                                        Aktifkan
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="9" class="px-6 py-12 text-center">
+                                                        <div class="text-4xl">🚗</div>
+
+                                                        <p class="mt-3 font-semibold text-slate-700">
+                                                            Belum ada data kendaraan
+                                                        </p>
+
+                                                        <p class="mt-1 text-sm text-slate-400">
+                                                            Silakan tambahkan kendaraan baru.
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                                @elseif($menu == 'log')
+
+                    <div class="space-y-6">
+
+                        {{-- HEADER --}}
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-900">
+                                    Log Aktivitas
+                                </h3>
+
+                                <p class="mt-1 text-sm text-slate-500">
+                                    Riwayat aktivitas pengguna dalam sistem.
+                                </p>
+                            </div>
                         </div>
 
+                        {{-- NOTIFIKASI --}}
+                        @if(session('success'))
+                            <div class="rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-600">
+                                {{ session('success') }}
+                            </div>
+                        @endif
 
-                        {{-- TAMBAH KENDARAAN --}}
+                        {{-- TABEL LOG AKTIVITAS --}}
+                        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-                        <a
-                            href="{{ route('admin.kendaraan.create') }}"
-                            class="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800">
+                            <div class="overflow-x-auto">
 
-                            + Tambah Kendaraan
+                                <table class="w-full text-left text-sm">
 
-                        </a>
-
-                    </div>
-
-
-                    {{-- NOTIFIKASI --}}
-
-                    @if(session('success'))
-
-                        <div
-                            class="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-medium text-green-700">
-
-                            ✓ {{ session('success') }}
-
-                        </div>
-
-                    @endif
-
-
-                    {{-- TABEL KENDARAAN --}}
-
-                    <div
-                        class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-                        <div
-                            class="border-b border-slate-200 px-6 py-5">
-
-                            <h2 class="text-lg font-bold text-slate-900">
-                                Daftar Kendaraan
-                            </h2>
-
-                            <p class="mt-1 text-sm text-slate-400">
-                                Data kendaraan yang terdaftar dalam sistem KABASA.
-                            </p>
-
-                        </div>
-
-
-                        <div class="overflow-x-auto">
-
-                            <table class="w-full text-left text-sm">
-
-                                <thead class="bg-slate-50">
-
-                                    <tr>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            No
-                                        </th>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            ID Kendaraan
-                                        </th>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            Jenis Kendaraan
-                                        </th>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            Warna
-                                        </th>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            Pemilik
-                                        </th>
-
-                                        <th class="px-6 py-4 font-semibold text-slate-500">
-                                            ID User
-                                        </th>
-
-                                        <th class="px-6 py-4 text-center font-semibold text-slate-500">
-                                            Aksi
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody class="divide-y divide-slate-100">
-
-                                    @forelse($kendaraans as $kendaraan)
-
-                                        <tr class="transition hover:bg-slate-50">
-
-                                            <td class="px-6 py-4 text-slate-400">
-                                                {{ $loop->iteration }}
-                                            </td>
-
-
-                                            <td class="px-6 py-4">
-
-                                                <span
-                                                    class="rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-
-                                                    {{ $kendaraan->id_kendaraan }}
-
-                                                </span>
-
-                                            </td>
-
-
-                                            <td class="px-6 py-4 font-semibold text-slate-800">
-
-                                                {{ $kendaraan->jenis_kendaraan }}
-
-                                            </td>
-
-
-                                            <td class="px-6 py-4 text-slate-600">
-
-                                                {{ $kendaraan->warna }}
-
-                                            </td>
-
-
-                                            <td class="px-6 py-4 font-semibold text-slate-800">
-
-                                                {{ $kendaraan->pemilik }}
-
-                                            </td>
-
-
-                                            <td class="px-6 py-4 text-slate-600">
-
-                                                {{ $kendaraan->id_user }}
-
-                                            </td>
-
-
-                                            <td class="px-6 py-4">
-
-                                                <div class="flex justify-center gap-2">
-
-
-                                                    {{-- EDIT --}}
-
-                                                    <a
-                                                        href="{{ route('admin.kendaraan.edit', $kendaraan->id_kendaraan) }}"
-                                                        class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">
-
-                                                        Edit
-
-                                                    </a>
-
-
-                                                    {{-- HAPUS --}}
-
-                                                    <form
-                                                        action="{{ route('admin.kendaraan.destroy', $kendaraan->id_kendaraan) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Yakin ingin menghapus kendaraan ini?')">
-
-                                                        @csrf
-
-                                                        @method('DELETE')
-
-                                                        <button
-                                                            type="submit"
-                                                            class="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100">
-
-                                                            Hapus
-
-                                                        </button>
-
-                                                    </form>
-
-                                                </div>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                    @empty
-
+                                    <thead class="bg-slate-950 text-white">
                                         <tr>
+                                            <th class="px-6 py-4 font-semibold">
+                                                No
+                                            </th>
 
-                                            <td
-                                                colspan="7"
-                                                class="px-6 py-12 text-center">
+                                            <th class="px-6 py-4 font-semibold">
+                                                ID Log
+                                            </th>
 
-                                                <div class="text-4xl">
-                                                    🚗
-                                                </div>
+                                            <th class="px-6 py-4 font-semibold">
+                                                ID User
+                                            </th>
 
-                                                <p
-                                                    class="mt-3 font-semibold text-slate-700">
+                                            <th class="px-6 py-4 font-semibold">
+                                                Aktivitas
+                                            </th>
 
-                                                    Belum ada data kendaraan
-
-                                                </p>
-
-                                                <p
-                                                    class="mt-1 text-sm text-slate-400">
-
-                                                    Silakan tambahkan kendaraan baru.
-
-                                                </p>
-
-                                            </td>
-
+                                            <th class="px-6 py-4 font-semibold">
+                                                Waktu Aktivitas
+                                            </th>
                                         </tr>
+                                    </thead>
 
-                                    @endforelse
+                                    <tbody class="divide-y divide-slate-200">
 
-                                </tbody>
+                                        @forelse($logs as $index => $log)
 
-                            </table>
+                                            <tr class="transition hover:bg-red-50">
+
+                                                <td class="px-6 py-4 text-slate-700">
+                                                    {{ $index + 1 }}
+                                                </td>
+
+                                                <td class="px-6 py-4 font-semibold text-red-600">
+                                                    {{ $log->id_log }}
+                                                </td>
+
+                                                <td class="px-6 py-4 text-slate-700">
+                                                    {{ $log->id_user }}
+                                                </td>
+
+                                                <td class="px-6 py-4 text-slate-700">
+                                                    {{ $log->aktivitas }}
+                                                </td>
+
+                                                <td class="px-6 py-4 text-slate-600">
+                                                    {{ $log->waktu_aktivitas->format('d-m-Y H:i:s') }}
+                                                </td>
+
+                                            </tr>
+
+                                        @empty
+
+                                            <tr>
+                                                <td
+                                                    colspan="5"
+                                                    class="px-6 py-10 text-center text-slate-500">
+
+                                                    Belum ada aktivitas yang tercatat.
+
+                                                </td>
+                                            </tr>
+
+                                        @endforelse
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
 
                         </div>
 
-                    </div>
+                    </div>    
+                
             @else
 
 

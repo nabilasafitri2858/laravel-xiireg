@@ -22,25 +22,33 @@ class TarifController extends Controller
         return view('admin.tarif.create');
     }
 
-    // Menyimpan tarif baru
+   // Menyimpan tarif baru
     public function store(Request $request)
     {
         $request->validate([
             'id_tarif' => 'required',
-            'jenis_kendaraan' => 'required',
-            'tarif_per_jam' => 'required|numeric',
+            'jenis_kendaraan' => 'required|string|max:100',
+            'jenis_kendaraan_lainnya' => 'required_if:jenis_kendaraan,Lainnya|nullable|string|max:100',
+            'tarif_per_jam' => 'required|numeric|min:0',
         ]);
+
+        // Menentukan jenis kendaraan
+        $jenisKendaraan = $request->jenis_kendaraan;
+
+        if ($jenisKendaraan === 'Lainnya') {
+            $jenisKendaraan = trim($request->jenis_kendaraan_lainnya);
+        }
 
         Tarif::create([
             'id_tarif' => $request->id_tarif,
-            'jenis_kendaraan' => $request->jenis_kendaraan,
+            'jenis_kendaraan' => $jenisKendaraan,
             'tarif_per_jam' => $request->tarif_per_jam,
         ]);
 
-       return redirect()->route('admin.dashboard', ['menu' => 'tarif'])
-    ->with('success', 'Tarif parkir berhasil ditambahkan!');
+        return redirect()
+            ->route('admin.dashboard', ['menu' => 'tarif'])
+            ->with('success', 'Tarif parkir berhasil ditambahkan!');
     }
-
     // Menampilkan form edit tarif
     public function edit($id_tarif)
     {
