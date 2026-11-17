@@ -27,40 +27,52 @@ class KendaraanController extends Controller
         return view('admin.kendaraan.create');
     }
 
-    // Menyimpan data kendaraan
-    public function store(Request $request)
-    {
-        $request->validate([
-            'id_kendaraan' => 'required|string|max:10|unique:tb_kendaraan,id_kendaraan',
-            'plat_nomor' => 'required_if:jenis_kendaraan,Motor,Mobil,Truk|nullable|string|max:20',
-            'jenis_kendaraan' => 'required|string|max:100',
-            'warna' => 'required|string|max:20',
-            'pemilik' => 'required|string|max:100',
-            'id_user' => 'required|string|max:10',
-        ]);
+   
+        // Menyimpan data kendaraan
+        public function store(Request $request)
+        {
+            $request->validate([
+                'id_kendaraan' => 'required|string|max:10|unique:tb_kendaraan,id_kendaraan',
 
-        $kendaraan = new Kendaraan();
+                'plat_nomor' => 'required_if:jenis_kendaraan,Motor,Mobil,Truk|nullable|string|max:20',
 
-        $kendaraan->id_kendaraan = $request->id_kendaraan;
-        $kendaraan->plat_nomor = $request->plat_nomor ?: null;
-        $kendaraan->jenis_kendaraan = $request->jenis_kendaraan;
-        $kendaraan->warna = $request->warna;
-        $kendaraan->pemilik = $request->pemilik;
-        $kendaraan->id_user = $request->id_user;
-        $kendaraan->status_aktif = 1;
+                'jenis_kendaraan' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    'in:Motor,Mobil,Truk,Sepeda Pancal,Becak,Dokar,Lainnya',
+                ],
 
-        $kendaraan->save();
+                'warna' => 'required|string|max:20',
+                'pemilik' => 'required|string|max:100',
+            ]);
 
-        LogAktivitas::create([
-            'id_log' => 'LOG' . strtoupper(Str::random(7)),
-            'id_user' => auth()->id(),
-            'aktivitas' => 'Menambahkan data kendaraan ' . $request->id_kendaraan,
-        ]);
+            $kendaraan = new Kendaraan();
 
-        return redirect()
-            ->route('admin.dashboard', ['menu' => 'kendaraan'])
-            ->with('success', 'Data kendaraan berhasil ditambahkan!');
-    }
+            $kendaraan->id_kendaraan = $request->id_kendaraan;
+            $kendaraan->plat_nomor = $request->plat_nomor ?: null;
+            $kendaraan->jenis_kendaraan = $request->jenis_kendaraan;
+            $kendaraan->warna = $request->warna;
+            $kendaraan->pemilik = $request->pemilik;
+
+            // Mengambil ID Admin yang sedang login
+            $kendaraan->id_user = auth()->user()->id_user;
+
+            $kendaraan->status_aktif = 1;
+
+            $kendaraan->save();
+
+            LogAktivitas::create([
+                'id_log' => 'LOG' . strtoupper(Str::random(7)),
+                'id_user' => auth()->user()->id_user,
+                'aktivitas' => 'Menambahkan data kendaraan ' . $request->id_kendaraan,
+            ]);
+
+            return redirect()
+                ->route('admin.dashboard', ['menu' => 'kendaraan'])
+                ->with('success', 'Data kendaraan berhasil ditambahkan!');
+        }
+
 
     // Menampilkan form edit kendaraan
     public function edit($id_kendaraan)
@@ -70,31 +82,39 @@ class KendaraanController extends Controller
         return view('admin.kendaraan.edit', compact('kendaraan'));
     }
 
-    // Mengubah data kendaraan
-    public function update(Request $request, $id_kendaraan)
-    {
-        $kendaraan = Kendaraan::findOrFail($id_kendaraan);
+    
+        // Mengubah data kendaraan
+        public function update(Request $request, $id_kendaraan)
+        {
+            $kendaraan = Kendaraan::findOrFail($id_kendaraan);
 
-        $request->validate([
-            'plat_nomor' => 'required_if:jenis_kendaraan,Motor,Mobil,Truk|nullable|string|max:20',
-            'jenis_kendaraan' => 'required|string|max:100',
-            'warna' => 'required|string|max:20',
-            'pemilik' => 'required|string|max:100',
-            'id_user' => 'required|string|max:10',
-        ]);
+            $request->validate([
+                'plat_nomor' => 'required_if:jenis_kendaraan,Motor,Mobil,Truk|nullable|string|max:20',
 
-        $kendaraan->plat_nomor = $request->plat_nomor ?: null;
-        $kendaraan->jenis_kendaraan = $request->jenis_kendaraan;
-        $kendaraan->warna = $request->warna;
-        $kendaraan->pemilik = $request->pemilik;
-        $kendaraan->id_user = $request->id_user;
+                'jenis_kendaraan' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    'in:Motor,Mobil,Truk,Sepeda Pancal,Becak,Dokar,Lainnya',
+                ],
 
-        $kendaraan->save();
+                'warna' => 'required|string|max:20',
+                'pemilik' => 'required|string|max:100',
+            ]);
 
-        return redirect()
-            ->route('admin.dashboard', ['menu' => 'kendaraan'])
-            ->with('success', 'Data kendaraan berhasil diubah!');
-    }
+            $kendaraan->plat_nomor = $request->plat_nomor ?: null;
+            $kendaraan->jenis_kendaraan = $request->jenis_kendaraan;
+            $kendaraan->warna = $request->warna;
+            $kendaraan->pemilik = $request->pemilik;
+
+            // ID User lama tetap dipertahankan
+            $kendaraan->save();
+
+            return redirect()
+                ->route('admin.dashboard', ['menu' => 'kendaraan'])
+                ->with('success', 'Data kendaraan berhasil diubah!');
+        }
+
 
     // Menonaktifkan kendaraan
     public function destroy($id_kendaraan)
