@@ -161,14 +161,20 @@
                             rounded-full bg-gradient-to-br from-red-500 to-red-900
                             font-bold text-white">
 
-                    {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
+                {{
+                    collect(explode(' ', trim(auth()->user()->nama_lengkap ?? auth()->user()->nama)))
+                        ->filter()
+                        ->take(2)
+                        ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                        ->implode('')
+                }}
 
                 </div>
 
                 <div class="min-w-0">
 
                     <p class="truncate text-sm font-semibold text-white">
-                        {{ auth()->user()->nama }}
+                        {{ auth()->user()->nama_lengkap ?? auth()->user()->nama }}
                     </p>
 
                     <p class="text-xs capitalize text-red-400">
@@ -284,7 +290,7 @@
                     </p>
 
                     <h1 class="text-3xl font-bold text-white">
-                        Halo, {{ auth()->user()->nama }}!
+                        Halo, {{ auth()->user()->nama_lengkap ?? auth()->user()->nama ?? 'Petugas' }}!
                     </h1>
 
                     <p class="mt-3 max-w-xl text-sm leading-6 text-slate-400">
@@ -589,4 +595,4 @@
 
 </body>
 </html>
-```
+

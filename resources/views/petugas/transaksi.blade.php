@@ -127,9 +127,9 @@
 
             </a>
 
-
-            {{-- CETAK STRUK --}}
-            <a href="#"
+            
+           {{-- CETAK STRUK --}}
+            <a href="{{ route('petugas.transaksi') }}"
                class="group flex items-center gap-3 rounded-xl
                       px-4 py-3 text-sm text-slate-300
                       transition hover:bg-red-950/60 hover:text-white">
@@ -385,11 +385,11 @@
                                         value="{{ $item->id_kendaraan }}"
                                         class="bg-zinc-950">
 
-                                        {{ $item->id_kendaraan }}
-                                        -
-                                        {{ $item->jenis_kendaraan }}
-                                        -
-                                        {{ $item->warna }}
+                                        {{ $item->plat_nomor }}
+                                         -
+                                         {{ $item->jenis_kendaraan }}
+                                         -
+                                         {{ $item->warna }}
 
                                     </option>
 
@@ -591,7 +591,7 @@
                                     <td class="px-6 py-5">
 
                                         <span class="text-sm text-slate-300">
-                                            {{ $item->id_kendaraan }}
+                                            {{ $platKendaraan[$item->id_kendaraan] ?? $item->id_kendaraan }}
                                         </span>
 
                                     </td>
@@ -601,7 +601,7 @@
                                     <td class="px-6 py-5">
 
                                         <span class="text-sm text-slate-400">
-                                            {{ $item->waktu_masuk }}
+                                           {{ \Carbon\Carbon::parse($item->waktu_masuk)->format('d-m-Y H:i') }}
                                         </span>
 
                                     </td>
@@ -611,7 +611,7 @@
                                     <td class="px-6 py-5">
 
                                         <span class="text-sm text-slate-400">
-                                            {{ $item->waktu_keluar ?? '-' }}
+                                           {{ $item->waktu_keluar ? \Carbon\Carbon::parse($item->waktu_keluar)->format('d-m-Y H:i') : '-' }}
                                         </span>
 
                                     </td>

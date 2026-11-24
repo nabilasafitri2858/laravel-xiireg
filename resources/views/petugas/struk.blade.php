@@ -84,6 +84,14 @@
                         </span>
                     </div>
 
+                    {{-- PLAT NOMOR --}}
+                    <div class="flex justify-between gap-4 border-b border-zinc-200 pb-3">
+                        <span class="text-sm text-zinc-500">Plat Nomor</span>
+                        <span class="text-sm font-bold text-right">
+                            {{ $kendaraan->plat_nomor ?? '-' }}
+                        </span>
+                    </div>
+
                     {{-- WARNA --}}
                     <div class="flex justify-between gap-4 border-b border-zinc-200 pb-3">
                         <span class="text-sm text-zinc-500">
@@ -158,6 +166,14 @@
 
                         <span class="text-sm font-bold text-right">
                             Rp {{ number_format($tarif->tarif_per_jam ?? 0, 0, ',', '.') }}
+                        </span>
+                    </div>
+
+                    {{-- PETUGAS --}}
+                    <div class="flex justify-between gap-4 border-b border-zinc-200 pb-3">
+                        <span class="text-sm text-zinc-500">Petugas</span>
+                        <span class="text-sm font-bold text-right">
+                            {{ $petugas->nama_lengkap ?? $petugas->nama ?? '-' }}
                         </span>
                     </div>
 

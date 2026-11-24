@@ -10,6 +10,7 @@ use App\Models\AreaParkir;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\User;
 
 class TransaksiController extends Controller
 {
@@ -17,20 +18,24 @@ class TransaksiController extends Controller
      * Menampilkan daftar transaksi
      */
     public function index()
-    {
-        $transaksi = Transaksi::orderBy('waktu_masuk', 'desc')->get();
+        {
+            $transaksi = Transaksi::orderBy('waktu_masuk', 'desc')->get();
 
-        $kendaraan = Kendaraan::all();
-        $tarif = Tarif::all();
-        $area = AreaParkir::all();
+            $kendaraan = Kendaraan::all();
+            $tarif = Tarif::all();
+            $area = AreaParkir::all();
 
-        return view('petugas.transaksi', compact(
-            'transaksi',
-            'kendaraan',
-            'tarif',
-            'area'
-        ));
-    }
+            // id_kendaraan => plat_nomor, buat ditampilkan di tabel
+            $platKendaraan = $kendaraan->pluck('plat_nomor', 'id_kendaraan');
+
+            return view('petugas.transaksi', compact(
+                'transaksi',
+                'kendaraan',
+                'tarif',
+                'area',
+                'platKendaraan'
+            ));
+        }
 
     /**
      * Menyimpan transaksi kendaraan masuk
@@ -60,8 +65,18 @@ class TransaksiController extends Controller
             return back()->with('error', 'Area parkir sudah penuh.');
         }
 
+        // Cegah kendaraan yang masih parkir masuk lagi
+        $masihParkir = Transaksi::where('id_kendaraan', $request->id_kendaraan)
+            ->where('status', 'masuk')
+            ->exists();
+
+        if ($masihParkir) {
+            return back()->with('error', 'Kendaraan ini masih berada di area parkir.');
+        }
+
         // ID transaksi
-        $idParkir = 'TRX-' . strtoupper(Str::random(6));
+        $idParkir = $this->generateIdParkir();
+
 
         Transaksi::create([
             'id_parkir' => $idParkir,
@@ -149,15 +164,34 @@ class TransaksiController extends Controller
             );
         }
 
-        $kendaraan = Kendaraan::find($transaksi->id_kendaraan);
+       $kendaraan = Kendaraan::find($transaksi->id_kendaraan);
         $tarif = Tarif::find($transaksi->id_tarif);
         $area = AreaParkir::find($transaksi->id_area);
+        $petugas = User::where('id_user', $transaksi->id_user)->first();
 
         return view('petugas.struk', compact(
             'transaksi',
             'kendaraan',
             'tarif',
-            'area'
+            'area',
+            'petugas'
         ));
     }
+
+            /**
+         * ID transaksi tanpa karakter yang mirip (I, O, 0, 1)
+         */
+        private function generateIdParkir(): string
+        {
+            $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+            do {
+                $kode = 'TRX-';
+                for ($i = 0; $i < 6; $i++) {
+                    $kode .= $chars[random_int(0, strlen($chars) - 1)];
+                }
+            } while (Transaksi::where('id_parkir', $kode)->exists());
+
+            return $kode;
+        }
 }
