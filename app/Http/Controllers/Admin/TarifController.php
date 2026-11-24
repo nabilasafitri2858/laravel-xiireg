@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tarif;
 use Illuminate\Http\Request;
+use App\Models\LogAktivitas;
+use Illuminate\Support\Str;
 
 class TarifController extends Controller
 {
@@ -20,6 +22,23 @@ class TarifController extends Controller
     public function create()
     {
         return view('admin.tarif.create');
+    }
+
+    // Mencatat aktivitas pengguna
+    private function catatAktivitas($aktivitas)
+    {
+        $admin = auth()->user();
+
+        if (!$admin) {
+            return;
+        }
+
+        LogAktivitas::create([
+            'id_log' => 'LOG' . strtoupper(Str::random(7)),
+            'id_user' => $admin->id_user,
+            'aktivitas' => $aktivitas,
+            'waktu_aktivitas' => now(),
+        ]);
     }
 
    // Menyimpan tarif baru
@@ -45,6 +64,11 @@ class TarifController extends Controller
             'tarif_per_jam' => $request->tarif_per_jam,
         ]);
 
+        $this->catatAktivitas(
+            'Menambahkan tarif ' . $jenisKendaraan .
+            ' (' . $request->id_tarif . ')'
+        );
+
         return redirect()
             ->route('admin.dashboard', ['menu' => 'tarif'])
             ->with('success', 'Tarif parkir berhasil ditambahkan!');
@@ -67,22 +91,40 @@ class TarifController extends Controller
             'tarif_per_jam' => 'required|numeric',
         ]);
 
+        $jenisLama = $tarif->jenis_kendaraan;
+
         $tarif->update([
             'jenis_kendaraan' => $request->jenis_kendaraan,
             'tarif_per_jam' => $request->tarif_per_jam,
         ]);
 
-        return redirect()->route('admin.tarif.index')
+        $this->catatAktivitas(
+            'Memperbarui tarif ' . $jenisLama .
+            ' menjadi ' . $tarif->jenis_kendaraan .
+            ' (' . $tarif->id_tarif . ')'
+        );
+
+        return redirect()
+            ->route('admin.dashboard', ['menu' => 'tarif'])
             ->with('success', 'Tarif parkir berhasil diperbarui!');
     }
+   // Menghapus tarif
+    public function destroy($id_tarif)
+    {
+        $tarif = Tarif::findOrFail($id_tarif);
 
-    // Menghapus tarif
-   public function destroy($id_tarif)
-{
-    $tarif = Tarif::findOrFail($id_tarif);
-    $tarif->delete();
+        $jenisKendaraan = $tarif->jenis_kendaraan;
+        $idTarif = $tarif->id_tarif;
 
-    return redirect()->route('admin.dashboard', ['menu' => 'tarif'])
-        ->with('success', 'Tarif parkir berhasil dihapus!');
-}
+        $tarif->delete();
+
+        $this->catatAktivitas(
+            'Menghapus tarif ' . $jenisKendaraan .
+            ' (' . $idTarif . ')'
+        );
+
+        return redirect()
+            ->route('admin.dashboard', ['menu' => 'tarif'])
+            ->with('success', 'Tarif parkir berhasil dihapus!');
+    }
 }

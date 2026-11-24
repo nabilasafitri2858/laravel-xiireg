@@ -116,23 +116,39 @@ class AreaParkirController extends Controller
             ->with('success', 'Area parkir berhasil diperbarui!');
     }
 
-    // Menghapus area
+    // Menonaktifkan area parkir
     public function destroy($id)
     {
         $area = AreaParkir::findOrFail($id);
 
-        $namaArea = $area->nama_area;
-        $idArea = $area->id_area;
-
-        $area->delete();
+        $area->status_aktif = 0;
+        $area->save();
 
         $this->catatAktivitas(
-            'Menghapus area parkir ' . $namaArea .
-            ' (' . $idArea . ')'
+            'Menonaktifkan area parkir ' . $area->nama_area .
+            ' (' . $area->id_area . ')'
         );
 
         return redirect()
             ->route('admin.dashboard', ['menu' => 'area'])
-            ->with('success', 'Area parkir berhasil dihapus!');
+            ->with('success', 'Area parkir berhasil dinonaktifkan!');
     }
+
+    // Mengaktifkan kembali area parkir
+        public function activate($id)
+        {
+            $area = AreaParkir::findOrFail($id);
+
+            $area->status_aktif = 1;
+            $area->save();
+
+            $this->catatAktivitas(
+                'Mengaktifkan kembali area parkir ' . $area->nama_area .
+                ' (' . $area->id_area . ')'
+            );
+
+            return redirect()
+                ->route('admin.dashboard', ['menu' => 'area'])
+                ->with('success', 'Area parkir berhasil diaktifkan kembali!');
+        }
 }

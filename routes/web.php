@@ -46,10 +46,11 @@ Route::middleware(['auth', CheckRole::class . ':admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('admin.dashboard');
 
-        // CRUD USER
+            // CRUD USER
         Route::resource('/user', UserController::class)
             ->names('admin.user');
-
+        Route::patch('/user/{id}/activate', [UserController::class, 'activate'])
+            ->name('admin.user.activate');
         // CRUD TARIF
         Route::prefix('tarif')
             ->name('admin.tarif.')
@@ -74,6 +75,8 @@ Route::middleware(['auth', CheckRole::class . ':admin'])
                 Route::get('/{id}/edit', [AreaParkirController::class, 'edit'])->name('edit');
                 Route::put('/{id}', [AreaParkirController::class, 'update'])->name('update');
                 Route::delete('/{id}', [AreaParkirController::class, 'destroy'])->name('destroy');
+                Route::patch('/{id}/activate', [AreaParkirController::class, 'activate'])->name('activate');
+
             });
 
         // CRUD KENDARAAN

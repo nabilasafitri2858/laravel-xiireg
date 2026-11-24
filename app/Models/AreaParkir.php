@@ -16,10 +16,11 @@ class AreaParkir extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [
-        'id_area',
-        'nama_area',
-        'kapasitas',
-        'terisi',
-    ];
+   protected $fillable = [
+    'id_area',
+    'nama_area',
+    'kapasitas',
+    'terisi',
+    'status_aktif',
+];
 }

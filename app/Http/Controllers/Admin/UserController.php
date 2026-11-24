@@ -139,4 +139,23 @@ class UserController extends Controller
             ->route('admin.dashboard', ['menu' => 'user'])
             ->with('success', 'User berhasil dinonaktifkan.');
     }
+
+    // Mengaktifkan kembali user
+    public function activate($id_user)
+    {
+        $user = User::findOrFail($id_user);
+
+        $user->update([
+            'status_aktif' => 1
+        ]);
+
+        $this->catatAktivitas(
+            'Mengaktifkan kembali user ' . $user->nama .
+            ' (' . $user->id_user . ')'
+        );
+
+        return redirect()
+            ->route('admin.dashboard', ['menu' => 'user'])
+            ->with('success', 'User berhasil diaktifkan kembali.');
+    }
 }
